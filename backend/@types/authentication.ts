@@ -12,4 +12,7 @@ export interface IRegister {
   password: string;
 }
 
-export interface Ilogin {}
+export interface IDecode {
+  id: string;
+  email: string;
+}

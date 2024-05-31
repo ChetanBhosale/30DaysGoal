@@ -1,7 +1,7 @@
 import { CatchAsyncError } from "../errors/CatchAsyncError";
 import { Request, Response, NextFunction } from "express";
 import ErrorHandler from "../errors/Errorhandler";
-import { Ilogin, IRegister, IUser } from "../@types/authentication";
+import { IDecode, IRegister, IUser } from "../@types/authentication";
 import generateSixDigitCode from "../utility/generateCode";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -115,7 +115,7 @@ export const login = CatchAsyncError(
         return next(new ErrorHandler("Invalid credentials", 400));
       }
 
-      const token = jwt.sign(
+      const token: string = jwt.sign(
         { id: user._id, email: user.email },
         process.env.ACCESS_TOKEN!,
         { expiresIn: "3h" }
@@ -139,4 +139,17 @@ export const login = CatchAsyncError(
 
 export const social = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {}
+);
+
+export const logout = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.cookie("token", "", { maxAge: 1 }).json({
+        success: true,
+        message: "logout successful!",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
 );

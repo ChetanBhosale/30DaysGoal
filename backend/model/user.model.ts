@@ -5,6 +5,7 @@ export interface IUser extends Document {
   password?: string;
   token?: string;
   public_id?: string;
+  banned: boolean;
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema({
@@ -27,6 +28,10 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
   },
   public_id: {
     type: String,
+  },
+  banned: {
+    type: Boolean,
+    default: false,
   },
 });
 

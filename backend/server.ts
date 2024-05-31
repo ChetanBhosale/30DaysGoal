@@ -21,8 +21,10 @@ app.use(
 dbConnection();
 
 import User from "./routes/user.router";
+import infoRouter from "./routes/info.router";
 
 app.use("/api/v1", User);
+app.use("/api/v1", infoRouter);
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const err = new Error(`Route ${req.originalUrl} not found!`) as any;
