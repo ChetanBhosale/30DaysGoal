@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to EssyKart</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333333;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 20px;
+        font-size: 28px;
+      }
+      .message {
+        padding: 20px;
+        background-color: #f0f8ff;
+        border-radius: 10px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .activation-code {
+        font-size: 32px;
+        color: #007bff;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      .instructions {
+        color: #333333;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      .contact {
+        text-align: center;
+        font-size: 14px;
+      }
+      .contact a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      .footer {
+        background-color: #333333;
+        color: #ffffff;
+        padding: 10px 20px;
+        border-radius: 0 0 10px 10px;
+        text-align: center;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Welcome to EssyKart</h1>
+      <div class="message">
+        <p>Hello,</p>
+        <p>
+          Thank you for registering with us. To activate your account, please
+          use the following activation code:
+        </p>
+        <h2 class="activation-code"><%= code %></h2>
+        <p class="instructions">
+          Please enter this code on the activation page within 5 minutes.
+        </p>
+        <p class="instructions">
+          If you did not register your email with EssyKart, please ignore this
+          email.
+        </p>
+      </div>
+      <div class="contact">
+        <p>
+          If you have any questions, please don't hesitate to contact us at
+          <a href="mailto:support@essykart.com">support@essykart.com</a>.
+        </p>
+      </div>
+    </div>
+    <div class="footer">&copy; 2024 EssyKart. All rights reserved.</div>
+  </body>
+</html>
