@@ -6,6 +6,7 @@ import generateSixDigitCode from "../utility/generateCode";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../model/user.model";
+import { chatHistoryModel } from "../model/conversation.model";
 
 export const register = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -79,9 +80,13 @@ export const activationAccount = CatchAsyncError(
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      await User.create({
+      let data = await User.create({
         email,
         password: hashedPassword,
+      });
+
+      await chatHistoryModel.create({
+        user: data._id,
       });
 
       res.clearCookie("register_token").json({
