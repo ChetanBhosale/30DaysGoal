@@ -10,13 +10,17 @@ interface IChatContent extends Document {
   day?: number;
 }
 
-interface IChatHistory extends Document {
+export interface IChatHistory extends Document {
   user: ObjectId;
   questionChat: ObjectId[];
-  dayChat: {
-    day: number;
-    chats: ObjectId[];
-  };
+  dayChat: [
+    {
+      day: number;
+      goal: string;
+      plan: string[];
+      chat: ObjectId[];
+    }
+  ];
 }
 
 export const chatContentSchema: Schema<IChatContent> = new mongoose.Schema(

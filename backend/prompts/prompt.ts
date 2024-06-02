@@ -35,3 +35,7 @@ Format your response as an array of JSON objects with the following structure:
 
 Ensure the plan is practical and tailored to the user's goal, providing clear, step-by-step guidance for each day.
 `;
+
+export const chatWithGoalPlan = `
+Using the information provided by the user, you have created a comprehensive 30-day plan to help achieve their goal. Now, the user will ask you various questions about specific days and goals from the plan. Your task is to answer these questions clearly and thoroughly, providing additional resources, articles, statistics, or any other helpful materials. Also, make sure to ask if the user has any further doubts or needs more clarification on any topic until user dont ask help from you!.
+`;
