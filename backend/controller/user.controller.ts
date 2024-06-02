@@ -130,13 +130,23 @@ export const PlanCreationPhase = CatchAsyncError(
 
       const jsonData = textToJson(text);
 
-      // jsonData.forEach(async (ele: IPlan,index:number) => {
-      //   data.day = index + 1,
-      // });
+      jsonData.forEach((ele: IPlan) => {
+        let dayPlans = {
+          day: ele.day,
+          goal: ele.goal,
+          plan: ele.plan,
+          chat: [],
+        };
+
+        data.dayChat.push(dayPlans);
+      });
+
+      data.save();
 
       res.json({
         success: true,
         jsonData,
+        message: "day plan as been created successfully!",
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
