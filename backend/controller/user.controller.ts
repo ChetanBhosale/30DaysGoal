@@ -9,6 +9,7 @@ import {
 } from "../model/conversation.model";
 
 import User from "../model/user.model";
+import textToJson from "../utility/testToJson";
 
 export const setGoal = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -182,17 +183,4 @@ export async function Store(
     output,
     parts,
   });
-}
-
-function textToJson(text: string) {
-  // Remove leading/trailing whitespaces and newlines
-  text = text.trim();
-
-  // Remove backticks and 'json' to get pure JSON string
-  text = text.replace(/^```json\n/, "").replace(/```$/, "");
-
-  // Parse the JSON string
-  const jsonData = JSON.parse(text);
-
-  return jsonData;
 }

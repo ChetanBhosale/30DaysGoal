@@ -81,5 +81,3 @@ export const chatHistoryModel = mongoose.model<IChatHistory>(
   "chatHistory",
   chatHistorySchema
 );
-
-// need to work on storing and creating the explanation
