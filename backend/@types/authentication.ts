@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export interface IUser {
   id: string;
   name: string;
@@ -7,10 +9,12 @@ export interface IUser {
   token?: string | null;
 }
 
-export interface IRegister {
-  email: string;
-  password: string;
-}
+export const zodRegisterAndLogin = z.object({
+  email: z.string().email(),
+  password: z.string().min(8, { message: "please enter atleast 8 character" }),
+});
+
+export type IRegister = z.infer<typeof zodRegisterAndLogin>;
 
 export interface IDecode {
   id: string;

@@ -1,7 +1,12 @@
 import { CatchAsyncError } from "../errors/CatchAsyncError";
 import { Request, Response, NextFunction } from "express";
 import ErrorHandler from "../errors/Errorhandler";
-import { IDecode, IRegister, IUser } from "../@types/authentication";
+import {
+  IDecode,
+  IRegister,
+  IUser,
+  zodRegisterAndLogin,
+} from "../@types/authentication";
 import generateSixDigitCode from "../utility/generateCode";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -11,7 +16,9 @@ import { chatHistoryModel } from "../model/conversation.model";
 export const register = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, password }: IRegister = req.body;
+      const { email, password }: IRegister = zodRegisterAndLogin.parse(
+        req.body
+      );
 
       if (!email || !password) {
         return next(
