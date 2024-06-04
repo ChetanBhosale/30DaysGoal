@@ -21,7 +21,6 @@ const Login: FC<Props> = ({ setPage }) => {
   const [password, setPassword] = useState<string>("");
 
   const handleLogin = () => {
-    // Handle the login logic here
     console.log("Email:", email, "Password:", password);
   };
 

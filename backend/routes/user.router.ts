@@ -1,19 +1,19 @@
 import { Router } from "express";
-import {
-  activationAccount,
-  login,
-  logout,
-  register,
-  social,
-} from "../controller/authentication";
 import isAuthenticated from "../middleware/authentication";
+import {
+  active_user,
+  register,
+  login,
+  me,
+  logout,
+} from "../controller/auth.controller";
 
 const userRouter = Router();
 
 userRouter.post("/register", register);
-userRouter.post("/active-user", activationAccount);
+userRouter.post("/active-user", active_user);
 userRouter.post("/login", login);
+userRouter.get("/me", isAuthenticated, me);
 userRouter.get("/logout", isAuthenticated, logout);
-userRouter.post("/social", social);
 
 export default userRouter;

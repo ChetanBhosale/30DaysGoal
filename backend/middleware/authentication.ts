@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../errors/CatchAsyncError";
 import ErrorHandler from "../errors/Errorhandler";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
-import User from "../model/user.model";
 import { IDecode } from "../@types/authentication";
+import { redis } from "../utility/redis";
 
 const isAuthenticated = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -19,17 +19,21 @@ const isAuthenticated = CatchAsyncError(
         process.env.ACCESS_TOKEN!
       )) as JwtPayload;
 
+      console.log(decode);
+
       if (!decode) {
         return next(new ErrorHandler("please login again!", 400));
       }
 
-      let data = await User.findById({ _id: decode.id });
+      let userRedis = await redis.get(decode.user._id);
+
+      let data = JSON.parse(userRedis as string);
 
       if (!data) {
         return next(new ErrorHandler("unauthorized access!", 400));
       }
+      req.user = decode.user;
 
-      req.user = decode;
       next();
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));

@@ -1,17 +1,13 @@
+import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../errors/CatchAsyncError";
-import { Request, Response, NextFunction } from "express";
+import { IRegister, zodRegisterAndLogin } from "../@types/authentication";
 import ErrorHandler from "../errors/Errorhandler";
-import {
-  IDecode,
-  IRegister,
-  IUser,
-  zodRegisterAndLogin,
-} from "../@types/authentication";
+import { User } from "../model/user.model";
 import generateSixDigitCode from "../utility/generateCode";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../model/user.model";
-import { chatHistoryModel } from "../model/conversation.model";
+import bcrypt from "bcryptjs";
+import { genModel } from "../utility/gen-ai";
+import { redis } from "../utility/redis";
 
 export const register = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -32,34 +28,36 @@ export const register = CatchAsyncError(
         return next(new ErrorHandler("User already exists", 400));
       }
 
-      let code: string = generateSixDigitCode();
-
+      const code: string = generateSixDigitCode();
       console.log(code);
 
-      let data = {
+      const data = {
         code,
         email,
         password,
       };
 
-      let token = jwt.sign(data, process.env.REGISTER_TOKEN!);
+      const token = jwt.sign(data, process.env.REGISTER_TOKEN!);
 
-      res.cookie("register_token", token, { maxAge: 5 * 60 * 1000 }).json({
-        message: "OTP sent to your email!",
-        token,
-      });
+      res
+        .status(201)
+        .cookie("register_token", token, { maxAge: 5 * 60 * 1000 })
+        .json({
+          message: "OTP sent to your email!",
+          token,
+        });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
   }
 );
 
-export const activationAccount = CatchAsyncError(
+export const active_user = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { code } = req.body;
-
       const token = req.cookies.register_token;
+
       if (!token) {
         return next(new ErrorHandler("No token found", 400));
       }
@@ -87,16 +85,12 @@ export const activationAccount = CatchAsyncError(
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      let data = await User.create({
+      await User.create({
         email,
         password: hashedPassword,
       });
 
-      await chatHistoryModel.create({
-        user: data._id,
-      });
-
-      res.clearCookie("register_token").json({
+      res.status(201).clearCookie("register_token").json({
         message: "Account activated successfully",
       });
     } catch (error: any) {
@@ -108,30 +102,36 @@ export const activationAccount = CatchAsyncError(
 export const login = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, password }: IRegister = req.body;
+      const { email, password }: IRegister = zodRegisterAndLogin.parse(
+        req.body
+      );
 
       if (!email || !password) {
-        return next(new ErrorHandler("Please provide credentials", 400));
+        return next(
+          new ErrorHandler("Please enter the correct credentials!", 400)
+        );
       }
 
-      const user = await User.findOne({ email });
+      const user: any = await User.findOne({ email });
 
       if (!user) {
-        return next(new ErrorHandler("User does not exist", 400));
+        return next(new ErrorHandler("User doesn't exist!", 400));
       }
-
-      console.log(user);
 
       const isPasswordValid = await bcrypt.compare(password, user.password!);
       if (!isPasswordValid) {
         return next(new ErrorHandler("Invalid credentials", 400));
       }
 
-      const token: string = jwt.sign(
-        { id: user._id, email: user.email },
-        process.env.ACCESS_TOKEN!,
-        { expiresIn: "3h" }
-      );
+      await redis.set(user._id.toString(), JSON.stringify(user));
+
+      if (user.password) {
+        user.password = undefined;
+      }
+
+      const token: string = jwt.sign({ user }, process.env.ACCESS_TOKEN!, {
+        expiresIn: "3h",
+      });
 
       res.cookie("token", token, {
         httpOnly: true,
@@ -142,6 +142,7 @@ export const login = CatchAsyncError(
       res.status(200).json({
         message: "Login successful",
         token,
+        user,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
@@ -149,17 +150,24 @@ export const login = CatchAsyncError(
   }
 );
 
-export const social = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {}
-);
-
 export const logout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      redis.del(req.user._id as string);
       res.cookie("token", "", { maxAge: 1 }).json({
         success: true,
-        message: "logout successful!",
+        message: "Logout successful!",
       });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+export const me = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.status(201).json(req.user);
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }

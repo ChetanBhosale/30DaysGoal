@@ -3,13 +3,9 @@ import { CatchAsyncError } from "../errors/CatchAsyncError";
 import ErrorHandler from "../errors/Errorhandler";
 import { genModel } from "../utility/gen-ai";
 import { chatWithGoalPlan, createPlan, initialPrompt } from "../prompts/prompt";
-import {
-  chatContentModel,
-  chatHistoryModel,
-  IChatHistory,
-} from "../model/conversation.model";
+import {} from "../model/user.model";
 
-import User from "../model/user.model";
+import { User } from "../model/user.model";
 import textToJson from "../utility/testToJson";
 import { ObjectId } from "mongoose";
 

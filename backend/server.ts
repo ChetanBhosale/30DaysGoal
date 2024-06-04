@@ -6,6 +6,8 @@ import cors from "cors";
 import "dotenv/config";
 import dbConnection from "./utility/db";
 const app: Express = express();
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname + "/.env" });
 
 app.use(cookieParser());
 app.use(morgan("dev"));
@@ -20,11 +22,9 @@ app.use(
 
 dbConnection();
 
-import User from "./routes/user.router";
-import infoRouter from "./routes/info.router";
-
-app.use("/api/v1", User);
-app.use("/api/v1", infoRouter);
+//basic routing
+import indexRouter from "./routes/index.router";
+app.use("/api/v1", indexRouter);
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const err = new Error(`Route ${req.originalUrl} not found!`) as any;
