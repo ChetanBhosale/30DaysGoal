@@ -2,13 +2,26 @@ import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../errors/CatchAsyncError";
 import ErrorHandler from "../errors/Errorhandler";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
-import { IDecode } from "../@types/authentication";
 import { redis } from "../utility/redis";
-
 const isAuthenticated = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const token = req.headers.cookie?.split("=")[1];
+      console.log(req.headers.cookie);
+      const cookies = req.headers.cookie;
+
+      if (!cookies) {
+        return next(new ErrorHandler("unauthorized access!", 400));
+      }
+
+      const tokenCookie = cookies
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+
+      if (!tokenCookie) {
+        return next(new ErrorHandler("unauthorized access!", 400));
+      }
+
+      const token = tokenCookie.split("=")[1];
 
       if (!token) {
         return next(new ErrorHandler("unauthorized access!", 400));

@@ -1,4 +1,5 @@
-import { ModeToggle } from "@/components/user/Droptheme";
+"use client";
+
 import Navbar from "@/components/user/navbar/Navbar";
 
 import React from "react";

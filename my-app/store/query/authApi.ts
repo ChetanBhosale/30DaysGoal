@@ -1,20 +1,20 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { setToken } from "../storage/authSlice";
+import {
+  userLoggedIn,
+  userLoggedOut,
+  userRegistration,
+} from "../storage/authSlice";
+import { z } from "zod";
+import { SignupForm } from "@/@types/auth";
+type ISignup = z.infer<typeof SignupForm>;
 
-interface IRegister {
-  email: string;
-  password: string;
-}
-
-interface ICode {
-  code: string;
-}
+type IRegisterAndLogin = Pick<ISignup, "email" | "password">;
 
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/api/v1/" }),
   endpoints: (builder) => ({
-    register: builder.mutation<any, IRegister>({
+    register: builder.mutation<any, IRegisterAndLogin>({
       query: (signupData) => ({
         url: "register",
         method: "POST",
@@ -24,13 +24,13 @@ export const authApi = createApi({
       async onQueryStarted(_args, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          dispatch(setToken(result.data.token));
+          dispatch(userRegistration(result.data.token));
         } catch (error: any) {
           console.log(error);
         }
       },
     }),
-    activeUser: builder.mutation<any, string>({
+    activeUser: builder.mutation<any, { code: string }>({
       query: (code) => ({
         url: "active-user",
         method: "POST",
@@ -38,7 +38,61 @@ export const authApi = createApi({
         credentials: "include" as const,
       }),
     }),
+    loginUser: builder.mutation<any, IRegisterAndLogin>({
+      query: (loginData) => ({
+        url: "login",
+        method: "POST",
+        body: loginData,
+        credentials: "include" as const,
+      }),
+      async onQueryStarted(_args, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(userLoggedIn(result.data));
+        } catch (error: any) {
+          console.log(error);
+        }
+      },
+    }),
+    loadUser: builder.query({
+      query: () => ({
+        url: "me",
+        method: "GET",
+        credentials: "include" as const,
+      }),
+      async onQueryStarted(_args, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          console.log(result.data.user);
+          dispatch(userLoggedIn(result.data.user));
+        } catch (error: any) {
+          console.log(error);
+        }
+      },
+    }),
+    logoutUser: builder.mutation({
+      query: (data) => ({
+        url: "logout",
+        method: "POST",
+        body: data,
+        credentials: "include" as const,
+      }),
+      async onQueryStarted(_args, { queryFulfilled, dispatch }) {
+        try {
+          await queryFulfilled;
+          dispatch(userLoggedOut());
+        } catch (error: any) {
+          console.log(error);
+        }
+      },
+    }),
   }),
 });
 
-export const { useRegisterMutation } = authApi;
+export const {
+  useRegisterMutation,
+  useActiveUserMutation,
+  useLoginUserMutation,
+  useLoadUserQuery,
+  useLogoutUserMutation,
+} = authApi;

@@ -12,6 +12,7 @@ import { redis } from "../utility/redis";
 export const register = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log("run till here");
       const { email, password }: IRegister = zodRegisterAndLogin.parse(
         req.body
       );
@@ -22,7 +23,9 @@ export const register = CatchAsyncError(
         );
       }
 
-      const check = await User.findOne({ email });
+      const check: any = await User.findOne({
+        email: new RegExp(`^${email}$`, "i"),
+      });
 
       if (check) {
         return next(new ErrorHandler("User already exists", 400));
@@ -55,6 +58,7 @@ export const register = CatchAsyncError(
 export const active_user = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log(req.body);
       const { code } = req.body;
       const token = req.cookies.register_token;
 
@@ -112,7 +116,9 @@ export const login = CatchAsyncError(
         );
       }
 
-      const user: any = await User.findOne({ email });
+      const user: any = await User.findOne({
+        email: new RegExp(`^${email}$`, "i"),
+      });
 
       if (!user) {
         return next(new ErrorHandler("User doesn't exist!", 400));
@@ -167,7 +173,10 @@ export const logout = CatchAsyncError(
 export const me = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.status(201).json(req.user);
+      console.log("get till here");
+      res.status(201).json({
+        user: req.user,
+      });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
