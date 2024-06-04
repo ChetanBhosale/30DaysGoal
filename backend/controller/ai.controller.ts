@@ -13,6 +13,7 @@ import {
   IUserGoal,
 } from "../@types/models.interface";
 import textToJson from "../utility/testToJson";
+import path from "path";
 
 export const setUserGoal = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -217,7 +218,11 @@ export const getPlan = CatchAsyncError(
     try {
       const chatHis = req.params.id;
 
-      const data = await ChatHistory.findById(chatHis);
+      const data = await ChatHistory.findById(chatHis).populate({
+        path: "dayChat.chat",
+        model: "ChatContent",
+        select: "-_id -createdAt -updatedAt -__v",
+      });
 
       res.status(201).json({
         success: true,
@@ -233,6 +238,63 @@ export const chatWithDays = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { day, text } = req.body;
+      const id = req.params.id;
+
+      console.log(id);
+
+      const data: IChatHistory | null = await ChatHistory.findById(id)
+        .populate([
+          {
+            path: "questionChat",
+            select: "-_id -parts._id -createdAt -updatedAt -__v",
+          },
+          {
+            path: "dayChat.chat",
+            select: "-_id -parts._id -createdAt -updatedAt -__v",
+          },
+        ])
+        .exec();
+
+      console.log(data);
+
+      if (data == null) {
+        return next(new ErrorHandler("could now found plan!", 500));
+      }
+
+      let userCurrentDay: any = data.dayChat[day - 1];
+      let prevChats = userCurrentDay.chat;
+
+      const chat = genModel.startChat({
+        history: [...data.questionChat, ...prevChats],
+      });
+
+      let result = await chat.sendMessage(text);
+      let response = await result.response;
+
+      const modelText = response.text();
+
+      console.log(modelText);
+
+      let userChat = await ChatContent.create({
+        role: "user",
+        parts: { text: text },
+      });
+
+      let modelChat = await ChatContent.create({
+        role: "model",
+        parts: { text: modelText },
+      });
+
+      data.dayChat[day - 1].chat.push(userChat._id as ObjectId);
+      data.dayChat[day - 1].chat.push(modelChat._id as ObjectId);
+
+      await data.save();
+
+      res.status(201).json({
+        success: true,
+        text,
+        result: modelText,
+      });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
