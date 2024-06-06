@@ -15,7 +15,6 @@ import { Label } from "@radix-ui/react-dropdown-menu";
 import React, { FC, useState } from "react";
 import { useSelector } from "react-redux";
 import LoadingPage from "../user/custom/LoadingPage";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
 type Props = {};
 
@@ -41,18 +40,17 @@ const Profile: FC<Props> = () => {
       ) : (
         <>
           <div className="space-y-5">
-            <div className="w-full flex justify-center items-center">
-              <Avatar className="border text-xl rounded-full p-4">
-                <AvatarFallback>
-                  {/* {isLoading ? <AvatarImage src={`https://api.dicebear.com/5.x/initials/svg?seed=${data?.user.email}`}} */}
-                  {isLoading ? <LoadingPage /> : data.user.email.slice(0, 2)}
-                </AvatarFallback>
-              </Avatar>
-            </div>
+            <div className="w-full flex justify-center items-center"></div>
 
             <div className="my-1 px-5 ">
               <Label className="">Email</Label>
-              <Input type="email" value={data?.user.email} className="mt-3" />
+              <Input
+                type="email"
+                readOnly
+                disabled
+                className="mt-3"
+                defaultValue={data.user.email}
+              />
             </div>
             <div className="my-1 px-5 ">
               <Label className="">Old Password</Label>
