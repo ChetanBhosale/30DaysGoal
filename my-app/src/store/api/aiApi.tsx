@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { goals } from "../slice/aiSlice";
 
 export const aiApi = createApi({
   reducerPath: "aiApi",
@@ -22,14 +21,6 @@ export const aiApi = createApi({
         credentials: "include",
       }),
       providesTags: ["MyGoals"],
-      async onQueryStarted(_args, { queryFulfilled, dispatch }) {
-        try {
-          const data = await queryFulfilled;
-          dispatch(goals(data.data));
-        } catch (error: any) {
-          console.log(error);
-        }
-      },
     }),
     getQuestionChat: builder.query<any, any>({
       query: (url) => ({
@@ -37,6 +28,7 @@ export const aiApi = createApi({
         method: "GET",
         credentials: "include" as const,
       }),
+      providesTags: ["MyGoals"],
     }),
     submitAnswers: builder.mutation<any, any>({
       query: (data) => ({
@@ -53,6 +45,14 @@ export const aiApi = createApi({
         credentials: "include" as const,
       }),
     }),
+    sendMessage: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `goal-plan/chat/${data.url}`,
+        method: "POST",
+        body: data,
+        credentials: "include" as const,
+      }),
+    }),
   }),
 });
 
@@ -62,4 +62,5 @@ export const {
   useGetQuestionChatQuery,
   useSubmitAnswersMutation,
   useGetDaysQuery,
+  useSendMessageMutation,
 } = aiApi;

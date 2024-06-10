@@ -17,7 +17,7 @@ const Layout = ({ children }: Props) => {
 
   if (user) {
     return (
-      <div className="w-full my-4 flex justify-center gap-4 ">
+      <div className="w-full flex-col 800px:flex-row my-4 flex justify-center gap-4 ">
         <Sidebar />
         {children}
       </div>

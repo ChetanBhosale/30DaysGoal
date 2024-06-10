@@ -12,7 +12,6 @@ import { redis } from "../utility/redis";
 export const register = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("run till here");
       const { email, password }: IRegister = zodRegisterAndLogin.parse(
         req.body
       );
@@ -32,7 +31,6 @@ export const register = CatchAsyncError(
       }
 
       const code: string = generateSixDigitCode();
-      console.log(code);
 
       const data = {
         code,
@@ -58,7 +56,6 @@ export const register = CatchAsyncError(
 export const active_user = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(req.body);
       const { code } = req.body;
       const token = req.cookies.register_token;
 
@@ -173,7 +170,6 @@ export const logout = CatchAsyncError(
 export const me = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("get till here");
       res.status(201).json({
         user: req.user,
       });

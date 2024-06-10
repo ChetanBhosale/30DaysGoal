@@ -6,7 +6,6 @@ import { redis } from "../utility/redis";
 const isAuthenticated = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(req.headers.cookie);
       const cookies = req.headers.cookie;
 
       if (!cookies) {
@@ -31,8 +30,6 @@ const isAuthenticated = CatchAsyncError(
         token,
         process.env.ACCESS_TOKEN!
       )) as JwtPayload;
-
-      console.log(decode);
 
       if (!decode) {
         return next(new ErrorHandler("please login again!", 400));

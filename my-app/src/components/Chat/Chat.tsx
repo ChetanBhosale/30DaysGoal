@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, FormEventHandler, useEffect, useState } from "react";
 import { LuSendHorizonal } from "react-icons/lu";
 import { Button } from "../ui/button";
@@ -28,11 +29,11 @@ const Chat: FC<Props> = ({ path, chat, setChat }) => {
       url: path,
     };
 
-    if (type.ans.length <= 20) {
+    if (type.ans.length <= 10) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Answer should not be less than 20 characters",
+        description: "Answer should not be less than 10 characters",
       });
       return;
     }
@@ -44,11 +45,12 @@ const Chat: FC<Props> = ({ path, chat, setChat }) => {
   useEffect(() => {
     if (isSuccess) {
       console.log(data);
-
-      if (data.message.includes("plan generated successfully")) {
+      if (data.text.includes("plan generated successfully")) {
+        toast({
+          title: "Plan generated successfully!",
+        });
         router.push("/dashboard");
       }
-      window.location.reload();
 
       const userData = {
         role: "user",
@@ -63,7 +65,7 @@ const Chat: FC<Props> = ({ path, chat, setChat }) => {
     }
     if (isError) {
       const errorData = error as any;
-      console.log(errorData);
+
       if (errorData.data.message.includes("GOOGLE")) {
         toast({
           variant: "destructive",
@@ -74,6 +76,12 @@ const Chat: FC<Props> = ({ path, chat, setChat }) => {
           window.location.reload();
         }, 3000);
       }
+
+      toast({
+        variant: "destructive",
+        title: "ERROR",
+        description: errorData.data.message,
+      });
     }
   }, [isSuccess, isError]);
 

@@ -57,6 +57,8 @@ const FetchedGoals = () => {
     router.push(`/dashboard/process/${id}`);
   }
 
+  
+
   return (
     <ScrollArea className="h-full w-full p-4 " ref={scrollAreaRef}>
       <div className="space-y-4">

@@ -1,19 +1,61 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState = {
-  goals: null,
+interface ChatPart {
+  text: string;
+}
+
+interface ChatMessage {
+  role: "user" | "model";
+  parts: ChatPart[];
+}
+
+interface AIState {
+  changed: boolean;
+  day: any;
+  chat: ChatMessage[];
+}
+
+const initialState: AIState = {
+  changed: false,
+  day: null,
+  chat: [],
 };
+
+interface ViewDayPayload {
+  change: boolean;
+  day: any;
+  chat: ChatMessage[];
+}
+
+interface SetChatPayload {
+  userChat: ChatMessage;
+  modelAns: ChatMessage;
+}
 
 const aiSlice = createSlice({
   name: "ai",
   initialState,
   reducers: {
-    goals: (state, action) => {
-      state.goals = action.payload;
+    viewDay: (state, action: PayloadAction<ViewDayPayload>) => {
+      state.changed = action.payload.change;
+      state.day = action.payload.day;
+      state.chat = action.payload.chat;
+    },
+    removeAll: (state) => {
+      state.changed = false;
+      state.day = null;
+      state.chat = [];
+    },
+    setChat: (state, action: PayloadAction<any>) => {
+      state.chat = [
+        ...state.chat,
+        action.payload.userChat,
+        action.payload.modelAns,
+      ];
     },
   },
 });
 
-export const { goals } = aiSlice.actions;
+export const { viewDay, removeAll, setChat } = aiSlice.actions;
 
 export default aiSlice.reducer;

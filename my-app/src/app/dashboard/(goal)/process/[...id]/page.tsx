@@ -13,11 +13,11 @@ import { toast } from "@/components/ui/use-toast";
 import SkeletonChat from "@/components/Chat/SkeletonChat";
 import { FaUserAstronaut } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { IoTodayOutline } from "react-icons/io5";
 
 const View = () => {
   const path = useParams();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  console.log(path.id[0]);
 
   const router = useRouter();
 
@@ -25,7 +25,6 @@ const View = () => {
     useGetQuestionChatQuery(path.id[0]);
 
   const [chat, setChat] = useState<any>([]);
-  console.log(chat);
 
   useEffect(() => {
     if (isError) {
@@ -34,7 +33,6 @@ const View = () => {
         variant: "destructive",
         title: "Error",
       });
-      console.log(errorData);
     }
     if (isSuccess) {
       if (data.data.questions) {
@@ -47,7 +45,6 @@ const View = () => {
       setChat(
         data.data.questionChat.slice(1, data.data.questionChat.length + 1)
       );
-      console.log(chat);
     }
   }, [isError, isSuccess, error, data]);
 
@@ -58,7 +55,15 @@ const View = () => {
   }, [chat]);
 
   return (
-    <div className="w-[50vw] bg-secondary relative border border-gray-300 dark:border-gray-700 rounded-md shadow-lg">
+    <div className="1000px:w-[50vw] w-full relative border border-gray-300 dark:border-gray-700 rounded-md shadow-lg">
+      <Button
+        className=" block 1000px:hidden my-2 mx-4 "
+        size="sm"
+        onClick={() => router.back()}
+        variant="ghost"
+      >
+        <IoTodayOutline size={20} />
+      </Button>
       <ScrollArea
         ref={scrollAreaRef}
         className="h-[84vh] flex flex-col relative w-full p-5 bg-white dark:bg-gray-800 rounded-t-md overflow-y-auto"

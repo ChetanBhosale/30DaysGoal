@@ -29,7 +29,6 @@ export const setUserGoal = CatchAsyncError(
       );
       const response = await checkGoal.response;
       const text: string = await response.text();
-      console.log(text);
 
       if (text.includes("false")) {
         return next(new ErrorHandler("Please enter a valid goal!", 401));
@@ -115,15 +114,11 @@ export const askQuestions = CatchAsyncError(
         })
         .exec();
 
-      console.log(history);
-
       if (!history) {
         return next(new ErrorHandler("no chat history found!", 500));
       }
 
       const chats: any = history?.questionChat;
-
-      console.log(chats);
 
       const prevChat = genModel.startChat({
         history: [...chats],
@@ -139,7 +134,7 @@ export const askQuestions = CatchAsyncError(
         await generate30DaysPlan(chats, history);
         return res.status(201).json({
           success: true,
-          message: "plan generated successfully!",
+          text: "plan generated successfully!",
         });
       }
 
@@ -186,8 +181,6 @@ export const getQuestionChat = CatchAsyncError(
         })
         .exec();
 
-      console.log(data);
-
       if (!data) {
         return next(new ErrorHandler("history not found", 500));
       }
@@ -213,7 +206,6 @@ async function generate30DaysPlan(
   const response = await result.response;
   const text = response.text();
 
-  console.log(text);
   const jsonData = textToJson(text);
 
   let promptCreation = await ChatContent.create({
@@ -266,8 +258,6 @@ export const chatWithDays = CatchAsyncError(
       const { day, text } = req.body;
       const id = req.params.id;
 
-      console.log(id);
-
       const data: IChatHistory | null = await ChatHistory.findById(id)
         .populate([
           {
@@ -280,8 +270,6 @@ export const chatWithDays = CatchAsyncError(
           },
         ])
         .exec();
-
-      console.log(data);
 
       if (data == null) {
         return next(new ErrorHandler("could now found plan!", 500));
@@ -298,8 +286,6 @@ export const chatWithDays = CatchAsyncError(
       let response = await result.response;
 
       const modelText = response.text();
-
-      console.log(modelText);
 
       let userChat = await ChatContent.create({
         role: "user",
