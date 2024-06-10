@@ -18,9 +18,6 @@ const config = {
       },
     },
     extend: {
-      backgroundColor: {
-        shade: "hsl(var(--backgroundColor))",
-      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -81,12 +78,9 @@ const config = {
         "1200px": "1200px",
         "1300px": "1300px",
         "1500px": "1500px",
+        "600px": "600px",
         "800px": "800px",
         "400px": "400px",
-      },
-      fontFamily: {
-        title: `"Luckiest Guy", cursive`,
-        body: `"Raleway", sans-serif;`,
       },
     },
   },

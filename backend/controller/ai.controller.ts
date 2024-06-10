@@ -175,6 +175,32 @@ interface IPlan {
   chat: any;
 }
 
+export const getQuestionChat = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id;
+      const data = await ChatHistory.findById({ _id: id })
+        .populate({
+          path: "questionChat",
+          select: "-_id -parts._id -createdAt -updatedAt -__v",
+        })
+        .exec();
+
+      console.log(data);
+
+      if (!data) {
+        return next(new ErrorHandler("history not found", 500));
+      }
+
+      res.status(201).json({
+        success: true,
+        data,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 async function generate30DaysPlan(
   chats: IChatContent[],
   history: IChatHistory
