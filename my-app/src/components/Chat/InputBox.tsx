@@ -71,7 +71,7 @@ const InputBox = () => {
       toast({
         variant: "destructive",
         title: "Error",
-        message: errorData.data.message,
+        description: errorData.data.message,
       });
     }
   }, [isSuccess, error, isError]);
