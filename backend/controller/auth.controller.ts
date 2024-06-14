@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { genModel } from "../utility/gen-ai";
 import { redis } from "../utility/redis";
+import sendMail from "../utility/sendMail";
 
 export const register = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -39,6 +40,13 @@ export const register = CatchAsyncError(
       };
 
       const token = jwt.sign(data, process.env.REGISTER_TOKEN!);
+
+      await sendMail({
+        email,
+        subject: "Activate Your Account",
+        template: "verification.ejs",
+        data,
+      });
 
       res
         .status(201)

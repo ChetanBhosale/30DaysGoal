@@ -38,7 +38,7 @@ const View = () => {
       if (data.data.questions) {
         toast({
           variant: "destructive",
-          title: "Question section is already completed!",
+          title: "Question section is completed, please view plan!",
         });
         router.push("/dashboard");
       }

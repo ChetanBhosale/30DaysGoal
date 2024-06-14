@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { FC, FormEvent, useEffect, useState } from "react";
@@ -15,6 +16,7 @@ import { Ilogin, Zlogin } from "../../@types/auth";
 import { toast } from "../ui/use-toast";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useLoginUserMutation } from "@/store/api/authApi";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 interface LoginProps {
   onClose: () => void;
@@ -26,7 +28,8 @@ const Login: FC<LoginProps> = ({ onClose }) => {
     email: "",
     password: "",
   });
-  const [loginUser, { isSuccess, isError, error }] = useLoginUserMutation();
+  const [loginUser, { isSuccess, isLoading, isError, error }] =
+    useLoginUserMutation();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -53,7 +56,8 @@ const Login: FC<LoginProps> = ({ onClose }) => {
   useEffect(() => {
     if (isSuccess) {
       toast({
-        title: "Login Successful!",
+        title: "Logged in!",
+        description: "Welcome to the application!",
       });
       onClose();
     }
@@ -115,9 +119,16 @@ const Login: FC<LoginProps> = ({ onClose }) => {
             </div>
           </div>
         </div>
-        <Button type="submit" className="mt-4 w-full">
-          Login
-        </Button>
+        {isLoading ? (
+          <Button disabled className="mt-4 w-full">
+            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+            Please wait
+          </Button>
+        ) : (
+          <Button type="submit" className="mt-4 w-full">
+            Login
+          </Button>
+        )}
       </form>
     </>
   );

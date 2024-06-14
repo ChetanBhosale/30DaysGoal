@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import { store } from "@/store/store";
 import ReduxProvider from "../store/ReduxProvider";
 import Custom from "@/components/Custom/CustomProvider";
+import CustomProgress from "./CustomProgress";
 
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function RootLayout({
           <ReduxProvider>
             <Custom>
               <Navbar />
+              <CustomProgress />
               {children}
               <Toaster />
             </Custom>

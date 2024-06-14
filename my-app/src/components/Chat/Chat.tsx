@@ -29,11 +29,11 @@ const Chat: FC<Props> = ({ path, chat, setChat }) => {
       url: path,
     };
 
-    if (type.ans.length <= 10) {
+    if (type.ans.length == 0) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Answer should not be less than 10 characters",
+        description: "Answer could not be empty",
       });
       return;
     }
@@ -45,11 +45,12 @@ const Chat: FC<Props> = ({ path, chat, setChat }) => {
   useEffect(() => {
     if (isSuccess) {
       console.log(data);
+
       if (data.text.includes("plan generated successfully")) {
         toast({
           title: "Plan generated successfully!",
         });
-        router.push("/dashboard");
+        window.location.reload();
       }
 
       const userData = {

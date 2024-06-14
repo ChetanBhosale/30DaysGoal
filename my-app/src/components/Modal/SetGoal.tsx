@@ -29,10 +29,10 @@ const SetGoal: FC<Props> = ({ onClose }) => {
     e.preventDefault();
     // onClose();
 
-    if (message.ans.length < 50) {
+    if (message.ans.length < 30) {
       toast({
         title: "Error",
-        description: "please provide atleast 50 characters of input!",
+        description: "please provide atleast 30 characters of input!",
       });
       return;
     } else if (message.ans.length >= 120) {
