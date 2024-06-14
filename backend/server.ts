@@ -7,6 +7,7 @@ import "dotenv/config";
 import dbConnection from "./utility/db";
 const app: Express = express();
 import * as dotenv from "dotenv";
+import path from "path";
 dotenv.config({ path: __dirname + "/.env" });
 
 app.use(cookieParser());

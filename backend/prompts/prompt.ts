@@ -16,7 +16,7 @@ Once you get a clear idea about the user's goal and dream, return true. Don't pr
 `;
 
 export const createPlan = `
-Using the answers provided by the user, create a comprehensive 30-day goal plan that will help the user achieve their goal, with each day's plan providing actionable steps and clear objectives. The plan should be relevant, provide value, and support the user's growth day by day. Each day should include a specific goal and a detailed plan to achieve it. 
+Using the answers provided by the user, create a comprehensive 30-day goal plan that will help the user achieve their goal, with each day's plan providing actionable steps and clear objectives. The plan should be relevant, provide value, and support the user's growth day by day. Each day should include a specific goal and a detailed plan to achieve it. The plan should be relevant and provide steps that logically build on each other. For example, if the user wants to learn something, provide them with actual steps and a curriculum to achieve that goal.
 
 Format your response as an array of JSON objects with the following structure:
 
