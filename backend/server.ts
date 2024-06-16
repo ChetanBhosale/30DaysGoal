@@ -13,7 +13,7 @@ dotenv.config({ path: __dirname + "/.env" });
 
 const app: Express = express();
 
-//api request limiter
+// API request limiter
 const limiter = rateLimit({
   windowMs: 15 * 60 * 100,
   max: 100,
@@ -48,11 +48,13 @@ dbConnection();
 import indexRouter from "./routes/index.router";
 app.use("/api/v1", indexRouter);
 
-// deployment
+// Deployment
 const __dirname1 = path.resolve();
-if (process.env.NODE_ENV == "production") {
+if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname1, "/my-app/build")));
-  app.get("*", (req, res) => {});
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname1, "my-app", "build", "index.html"));
+  });
 } else {
   app.get("/", (req, res) => {
     res.send("API is running successfully!");
