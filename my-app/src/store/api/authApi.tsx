@@ -8,7 +8,10 @@ interface ICredentials {
 
 export const authApi = createApi({
   reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://13.54.129.243:8000/api/v1/" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl:
+      "https://ec2-13-54-129-243.ap-southeast-2.compute.amazonaws.com:8000/api/v1/",
+  }),
   endpoints: (builder) => ({
     register: builder.mutation<any, any>({
       query: (data) => ({
