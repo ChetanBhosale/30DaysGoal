@@ -32,7 +32,8 @@ app.use(
     origin: [
       "https://30-days-goal-icrv.vercel.app",
       "http://localhost:3000",
-      "https://goalsetter-six.vercel.app/",
+      "https://goalsetter-six.vercel.app",
+      "https://goal-setter-one.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "HEAD", "DELETE"],
     allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
