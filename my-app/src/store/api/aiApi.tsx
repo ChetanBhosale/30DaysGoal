@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const aiApi = createApi({
   reducerPath: "aiApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http:localhost:8000/api/v1/",
+    baseUrl: "https://three0daysgoal.onrender.com/api/v1/",
   }),
   tagTypes: ["MyGoals"],
   endpoints: (builder) => ({
