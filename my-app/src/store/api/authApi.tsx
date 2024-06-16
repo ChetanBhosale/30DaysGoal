@@ -9,8 +9,7 @@ interface ICredentials {
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    baseUrl:
-      "https://ec2-13-54-129-243.ap-southeast-2.compute.amazonaws.com:8000/api/v1/",
+    baseUrl: "http:localhost:8000/api/v1/",
   }),
   endpoints: (builder) => ({
     register: builder.mutation<any, any>({
@@ -49,7 +48,7 @@ export const authApi = createApi({
       query: (data) => ({
         url: "login",
         method: "POST",
-        credentials: "include",
+        credentials: "include" as const,
         body: data,
       }),
       async onQueryStarted(_args, { queryFulfilled, dispatch }) {

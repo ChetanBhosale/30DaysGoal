@@ -5,50 +5,73 @@ import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
 import dbConnection from "./utility/db";
-const app: Express = express();
 import * as dotenv from "dotenv";
+import path from "path";
+import { rateLimit } from "express-rate-limit";
 
 dotenv.config({ path: __dirname + "/.env" });
 
+const app: Express = express();
+
+//api request limiter
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 100,
+  max: 100,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+});
+
+// Middleware
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.json());
 
-const allowedOrigins = [
-  "https://30-days-goal-icrv.vercel.app",
-  "http://localhost:3000",
-];
-
+// CORS Configuration
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg =
-          "The CORS policy for this site does not allow access from the specified Origin.";
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    credentials: true, // Allow cookies and other credentials
+    origin: [
+      "https://30-days-goal-icrv.vercel.app",
+      "http://localhost:3000",
+      "https://goalsetter-six.vercel.app/",
+    ],
+    methods: ["GET", "POST", "PUT", "HEAD", "DELETE"],
+    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
+    credentials: true,
   })
 );
 
+// Database connection
 dbConnection();
 
 // Basic routing
 import indexRouter from "./routes/index.router";
 app.use("/api/v1", indexRouter);
 
+// deployment
+const __dirname1 = path.resolve();
+if (process.env.NODE_ENV == "production") {
+  app.use(express.static(path.join(__dirname1, "/my-app/build")));
+  app.get("*", (req, res) => {});
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running successfully!");
+  });
+}
+
+// Error handling for undefined routes
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const err = new Error(`Route ${req.originalUrl} not found!`) as any;
   err.statusCode = 400;
   next(err);
 });
+
+app.use(limiter);
+
+// Custom error handling middleware
 app.use(Errors);
 
+// Start server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log("server started successfully!");
+  console.log(`Server started successfully on port ${PORT}`);
 });

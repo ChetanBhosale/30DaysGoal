@@ -67,7 +67,7 @@ const Login: FC<LoginProps> = ({ onClose }) => {
         console.log(error);
         toast({
           title: "Error",
-          description: errorData.data.message,
+          description: errorData?.data?.message,
         });
       }
     }

@@ -3,8 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const aiApi = createApi({
   reducerPath: "aiApi",
   baseQuery: fetchBaseQuery({
-    baseUrl:
-      "https://ec2-13-54-129-243.ap-southeast-2.compute.amazonaws.com:8000/api/v1/",
+    baseUrl: "http:localhost:8000/api/v1/",
   }),
   tagTypes: ["MyGoals"],
   endpoints: (builder) => ({
