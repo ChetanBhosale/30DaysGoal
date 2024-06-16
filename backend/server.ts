@@ -28,7 +28,7 @@ app.use(express.json());
 
 // CORS Configuration
 const corsOptions = {
-  origin: "*",
+  origin: "https://goalsetter-ten.vercel.app", // Your front-end URL
   methods: ["GET", "POST", "PUT", "HEAD", "DELETE"],
   allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
   credentials: true,
