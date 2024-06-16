@@ -64,6 +64,7 @@ const Login: FC<LoginProps> = ({ onClose }) => {
     if (isError) {
       if (error) {
         let errorData = error as any;
+        console.log(error);
         toast({
           title: "Error",
           description: errorData.data.message,

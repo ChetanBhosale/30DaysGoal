@@ -7,23 +7,37 @@ import "dotenv/config";
 import dbConnection from "./utility/db";
 const app: Express = express();
 import * as dotenv from "dotenv";
-import path from "path";
+
 dotenv.config({ path: __dirname + "/.env" });
 
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.json());
 
+const allowedOrigins = [
+  "https://30-days-goal-icrv.vercel.app",
+  "http://localhost:3000",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    credentials: true,
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true, // Allow cookies and other credentials
   })
 );
 
 dbConnection();
 
-//basic routing
+// Basic routing
 import indexRouter from "./routes/index.router";
 app.use("/api/v1", indexRouter);
 
@@ -33,6 +47,7 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
   next(err);
 });
 app.use(Errors);
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log("server started successfully!");

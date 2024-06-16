@@ -6,7 +6,6 @@ import { User } from "../model/user.model";
 import generateSixDigitCode from "../utility/generateCode";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { genModel } from "../utility/gen-ai";
 import { redis } from "../utility/redis";
 import sendMail from "../utility/sendMail";
 
@@ -50,7 +49,12 @@ export const register = CatchAsyncError(
 
       res
         .status(201)
-        .cookie("register_token", token, { maxAge: 5 * 60 * 1000 })
+        .cookie("register_token", token, {
+          maxAge: 5 * 60 * 1000,
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+        })
         .json({
           message: "OTP sent to your email!",
           token,
@@ -145,9 +149,10 @@ export const login = CatchAsyncError(
       });
 
       res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
         maxAge: 3 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
       });
 
       res.status(200).json({
@@ -165,10 +170,17 @@ export const logout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       redis.del(req.user._id as string);
-      res.cookie("token", "", { maxAge: 1 }).json({
-        success: true,
-        message: "Logout successful!",
-      });
+      res
+        .cookie("token", "", {
+          maxAge: 1,
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+        })
+        .json({
+          success: true,
+          message: "Logout successful!",
+        });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
