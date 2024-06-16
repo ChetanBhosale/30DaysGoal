@@ -28,12 +28,7 @@ app.use(express.json());
 
 // CORS Configuration
 const corsOptions = {
-  origin: [
-    "https://30-days-goal-icrv.vercel.app",
-    "http://localhost:3000",
-    "https://goalsetter-six.vercel.app",
-    "https://goal-setter-one.vercel.app",
-  ],
+  origin: "*",
   methods: ["GET", "POST", "PUT", "HEAD", "DELETE"],
   allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
   credentials: true,
