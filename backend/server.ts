@@ -15,10 +15,10 @@ const app: Express = express();
 
 // API request limiter
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 100,
-  max: 100,
-  standardHeaders: "draft-7",
-  legacyHeaders: false,
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
 // Middleware
@@ -27,19 +27,24 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 // CORS Configuration
-app.use(
-  cors({
-    origin: [
-      "https://30-days-goal-icrv.vercel.app",
-      "http://localhost:3000",
-      "https://goalsetter-six.vercel.app",
-      "https://goal-setter-one.vercel.app",
-    ],
-    methods: ["GET", "POST", "PUT", "HEAD", "DELETE"],
-    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: [
+    "https://30-days-goal-icrv.vercel.app",
+    "http://localhost:3000",
+    "https://goalsetter-six.vercel.app",
+    "https://goal-setter-one.vercel.app",
+  ],
+  methods: ["GET", "POST", "PUT", "HEAD", "DELETE"],
+  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
+  credentials: true,
+};
+app.use(cors(corsOptions));
+
+// Log CORS options to verify they are set correctly
+console.log("CORS Options:", corsOptions);
+
+// Ensure the server responds to preflight requests
+app.options("*", cors(corsOptions));
 
 // Database connection
 dbConnection();
