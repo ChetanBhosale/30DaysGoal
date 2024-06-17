@@ -15,29 +15,42 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.json());
 
+const allowedOrigins = [
+  "https://goalsetterapp-five.vercel.app",
+  "https://goalsetter-ten.vercel.app",
+  "http://localhost:3000",
+];
+
 const corsOptions = {
   origin: (
     origin: string | undefined,
     callback: (err: Error | null, allow?: boolean) => void
   ) => {
-    callback(null, true);
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
   },
   credentials: true,
 };
 
+app.use(cors(corsOptions));
+
+// Ensure CORS headers are set for all routes
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+  const origin = req.headers.origin as string;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
-  res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
 });
-
-app.use(cors(corsOptions));
 
 dbConnection();
 
