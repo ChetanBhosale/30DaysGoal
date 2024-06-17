@@ -5,43 +5,52 @@ import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
 import dbConnection from "./utility/db";
-const app: Express = express();
 import * as dotenv from "dotenv";
 
 dotenv.config({ path: __dirname + "/.env" });
+
+const app: Express = express();
 
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.json());
 
 const allowedOrigins = [
-  'https://goalsetter-ten.vercel.app',
-  'http://localhost:3000',
+  "https://goalsetterapp-five.vercel.app",
+  "https://goalsetter-ten.vercel.app",
+  "http://localhost:3000",
 ];
 
 const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
 };
 
+app.use(cors(corsOptions));
+
+// Ensure CORS headers are set for all routes
 app.use((req, res, next) => {
   const origin = req.headers.origin as string;
   if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader("Access-Control-Allow-Origin", origin);
   }
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
   next();
 });
-
-app.use(cors(corsOptions));
 
 dbConnection();
 
@@ -54,6 +63,7 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
   err.statusCode = 400;
   next(err);
 });
+
 app.use(Errors);
 
 const PORT = process.env.PORT || 8000;
