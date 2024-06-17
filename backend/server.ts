@@ -37,6 +37,16 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Logging middleware
+app.use((req, res, next) => {
+  console.log(
+    `Request Method: ${req.method}, Request URL: ${req.url}, Origin: ${req.headers.origin}`
+  );
+  next();
+});
+
+app.options("*", cors(corsOptions)); // Preflight requests handling
+
 // Ensure CORS headers are set for all routes
 app.use((req, res, next) => {
   const origin = req.headers.origin as string;
@@ -68,5 +78,5 @@ app.use(Errors);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log("server started successfully!");
+  console.log(`Server started successfully on port ${PORT}!`);
 });
