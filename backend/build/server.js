@@ -38,7 +38,7 @@ const express_rate_limit_1 = require("express-rate-limit");
 dotenv.config({ path: __dirname + "/.env" });
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: ["goalsetterapp-five.vercel.app"],
+    origin: ["https://30-days-goal.vercel.app", "30-days-goal.vercel.app"],
     credentials: true,
 }));
 app.use((0, cookie_parser_1.default)());
