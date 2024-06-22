@@ -34,22 +34,28 @@ const cors_1 = __importDefault(require("cors"));
 require("dotenv/config");
 const db_1 = __importDefault(require("./utility/db"));
 const dotenv = __importStar(require("dotenv"));
+const express_rate_limit_1 = require("express-rate-limit");
 dotenv.config({ path: __dirname + "/.env" });
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:3000"],
+    origin: ["goalsetterapp-five.vercel.app"],
     credentials: true,
 }));
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.json());
 app.use((0, morgan_1.default)("dev"));
-// Logging middleware
+const limit = (0, express_rate_limit_1.rateLimit)({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: "draft-7",
+    legacyHeaders: false,
+});
+app.use(limit);
 app.use((req, res, next) => {
     console.log(`Request Method: ${req.method}, Request URL: ${req.url}, Origin: ${req.headers.origin}`);
     next();
 });
 (0, db_1.default)();
-// Basic routing
 const index_router_1 = __importDefault(require("./routes/index.router"));
 app.use("/api/v1", index_router_1.default);
 app.all("*", (req, res, next) => {
