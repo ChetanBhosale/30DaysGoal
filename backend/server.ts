@@ -14,7 +14,10 @@ const app: Express = express();
 
 app.use(
   cors({
-    origin: ["https://30-days-goal.vercel.app", "30-days-goal.vercel.app"],
+    origin: [
+      "https://30-days-goal.vercel.app",
+      "https://goalsetterapp-five.vercel.app",
+    ],
     credentials: true,
   })
 );
