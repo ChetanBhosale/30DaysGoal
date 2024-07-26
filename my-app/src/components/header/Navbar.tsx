@@ -23,7 +23,7 @@ const Navbar = () => {
         className="uppercase roboto tracking-widest cursor-pointer font-extrabold flex items-center gap-1"
       >
         <IoLogoAlipay size="20" />
-        SETGOAL.AI
+        SUSTAINIQ.AI
       </h1>
       <div className="roboto gap-2 tracking-wide flex justify-center items-center">
         <ModeToggle />
